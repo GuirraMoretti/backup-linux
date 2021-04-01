@@ -19,12 +19,12 @@ limpezabackups()        #? Bloco para limpar o excesso de backups
 
 compress()      #? Bloco para compactar os backups
 {
-    if [ ! -d $LOCAL_DIRETORIO ]    #? Checaguem se o diretorio de backups existe. se não...
+    if [ ! -d $LOCAL_DIRETORIO ]    #? Verifica se o diretorio de backups existe. se não...
     then
         mkdir $LOCAL_DIRETORIO #? Faça o diretorio
     fi
     
-    if [ ! -f $PASTA_BACKUP_INPUT]
+    if [ ! -f $PASTA_BACKUP_INPUT]      #? Verifica se o txt existe
     then
         touch $PASTA_BACKUP_INPUT
     fi
