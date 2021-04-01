@@ -23,6 +23,12 @@ compress()      #? Bloco para compactar os backups
     then
         mkdir $LOCAL_DIRETORIO #? Faça o diretorio
     fi
+    
+    if [ ! -f $PASTA_BACKUP_INPUT]
+    then
+        touch $PASTA_BACKUP_INPUT
+    fi
+
     cd $HOME
     clear
     echo -e "\t\t\t\tItens salvos"
