@@ -46,6 +46,7 @@ echo -e "                            Digite a opção desejada                  
 echo -e "1. Fazer backup"
 echo -e "2. Apagar excesso de backup"
 echo -e "3. Completo (Limpeza + Backup)"
+echo -e "9. Criar txt para adicionar as pastas desejadas para backup"
 echo -e "-------------------------------------------------------------------------------"
 printf "Digite a opção desejada: " 
 read -r opcao       #? Receba a opção desejada
@@ -54,5 +55,9 @@ case $opcao in      #? Execute x de acordo com a opção desejada
 1) compress ;;
 2) limpezabackups ;;
 3) limpezabackups && compress ;;
+9) if [ ! -f $PASTA_BACKUP_INPUT ]    
+    then
+        touch $PASTA_BACKUP_INPUT
+    fi;;
 esac
 
