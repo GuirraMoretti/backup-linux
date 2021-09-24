@@ -1,11 +1,10 @@
 #!/bin/bash
 
 #? Definindo as variaveis para utilizar no script
-
 DATE=$(date +%d-%m-%Y-%Hh-%Mm)          #? Informa a data no instante que o script foi rodado
 PASTA_BACKUP_INPUT="$HOME/.pastasparabackup.txt"    #? Informa as pastas que serão "backupeadas" ou seja, as pastas que serão salvas
-LOCAL_FILE_SAVE="$HOME/Backup/snapshots/backup-${DATE}.tar.gz" #? Informa o local em que será salvo o arquivo de backup + o nome do arquivo
-LOCAL_DIRETORIO="$HOME/Backup/snapshots" #? Pasta onde serão salvo os backups
+LOCAL_FILE_SAVE="$HOME/HDD/Backups_ZIP/backup-${DATE}.tar.gz" #? Informa o local em que será salvo o arquivo de backup + o nome do arquivo
+LOCAL_DIRETORIO="$HOME/HDD/Backups_ZIP" #? Pasta onde serão salvo os backups
 NUMBER_OF_FILES_BACKUP=$(ls $LOCAL_DIRETORIO | wc -l) #? Informa a quantidade de backups que estão salvos na pasta
 DIFERENCA=$(expr 5 - $NUMBER_OF_FILES_BACKUP) #? Informa a diferença entre a quantidade de backups (menos) - 5 (Valor que defini como excesso de backup) se
 limpezabackups()        #? Bloco para limpar o excesso de backups
@@ -17,7 +16,7 @@ limpezabackups()        #? Bloco para limpar o excesso de backups
 }
 compress()      #? Bloco para compactar os backups
 {
-    if [[ ! -e $PASTA_BACKUP_INPUT && ! -d $LOCAL_DIRETORIO ]]
+    if [[ ! -d $LOCAL_DIRETORIO && ! -e $PASTA_BACKUP_INPUT ]]
         then
         clear
         echo -e "Pasta de backup e/ou arquivo de configuração de pasta não existem."
@@ -30,7 +29,7 @@ compress()      #? Bloco para compactar os backups
     fi
     addfolders
     clear
-    if tar -czvf "$LOCAL_FILE_SAVE" -T <(sed 1,2d "$PASTA_BACKUP_INPUT")   #? Compacta as pastas que foram escolhidas para serem salvas num unico arquivo tar.gz.
+    if tar -czvf "$LOCAL_FILE_SAVE" --exclude=/home/Guirra/HDD/Escola/Aulas -T <(sed 1,2d "$PASTA_BACKUP_INPUT")  #? Compacta as pastas que foram escolhidas para serem salvas num unico arquivo tar.gz.
     then
         echo -e "\n\t\t\t\tBackup feito"
     else
@@ -54,7 +53,7 @@ addfolders()
 }
 criation()
 {
-    if [[ ! -e $PASTA_BACKUP_INPUT && ! -d $LOCAL_DIRETORIO ]]
+    if [[ ! -d $LOCAL_DIRETORIO && ! -e $PASTA_BACKUP_INPUT ]]
         then
             touch $PASTA_BACKUP_INPUT && mkdir $LOCAL_DIRETORIO
             echo -e "#Coloque o diretorio da pasta que será salva com o caminho COMPLETO.\n#Insira no seguinte modelo:/home/user/pasta" > $PASTA_BACKUP_INPUT
@@ -71,8 +70,9 @@ echo -e "                            Digite a opção desejada                  
 echo -e "1. Fazer backup"
 echo -e "2. Apagar excesso de backup"
 echo -e "3. Completo (Limpeza + Backup)"
-echo -e "4. Resetar configurações das pastas desejadas para backup"
+echo -e "4. Adicionar/Resetar pastas desejadas para backup"
 echo -e "5. Editar configurações das pastas desejadas para backup"
+echo -e "6. Sincronizar backups com o drive"
 echo -e "-------------------------------------------------------------------------------"
 printf "Digite a opção desejada: " 
 read -r opcao       #? Receba a opção desejada
@@ -82,7 +82,8 @@ case $opcao in      #? Execute x de acordo com a opção desejada
 2) limpezabackups ;;
 3) limpezabackups && compress ;;
 4) rm -f $PASTA_BACKUP_INPUT && rm -rf $LOCAL_DIRETORIO && criation;;
-5) nano $PASTA_BACKUP_INPUT;;
+5) criation && nano $PASTA_BACKUP_INPUT;;
+6) rclone sync -P $LOCAL_DIRETORIO gdrive:/Backup
 esac
 }
 menu
